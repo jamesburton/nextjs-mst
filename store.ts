@@ -6,6 +6,7 @@ import {
   SnapshotOut,
   types,
 } from "mobx-state-tree";
+import { AuthStore/*, IAuthStore*/ } from "./authStore";
 
 let store: IStore | undefined;
 
@@ -13,6 +14,7 @@ const Store = types
   .model({
     lastUpdate: types.Date,
     light: false,
+    auth: types.optional(AuthStore, {}),
   })
   .actions((self) => {
     let timer: any;
