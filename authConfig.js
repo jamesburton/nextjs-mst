@@ -129,8 +129,6 @@ export const loginRequest = {
 export const msalInstance = new PublicClientApplication(msalConfig);
 await msalInstance.initialize();
 
-console.log('msalInstance', msalInstance);
-
 export const login = async () => {
     try {
         return await msalInstance.loginPopup(loginRequest);
