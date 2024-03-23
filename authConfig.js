@@ -16,9 +16,9 @@ export const b2cPolicies = {
         // signUpSignIn: 'B2C_1_susi_v2',
         signUpSignIn: process.env.AZURE_AD_SIGNUP_FLOW,
         // forgotPassword: 'B2C_1_reset_v3',
-        // forgotPassword: process.env.AZURE_AD_FORGOT_PASSWORD_FLOW,
-        // // editProfile: 'B2C_1_edit_profile_v2',
-        // editProfile: process.env.AZURE_AD_EDIT_PROFILE_FLOW,
+        forgotPassword: process.env.AZURE_AD_FORGOT_PASSWORD_FLOW,
+        // editProfile: 'B2C_1_edit_profile_v2',
+        editProfile: process.env.AZURE_AD_EDIT_PROFILE_FLOW,
     },
     authorities: {
         /*
@@ -46,31 +46,26 @@ export const b2cPolicies = {
     authorityDomain: `${process.env.AZURE_AD_TENANT}.b2clogin.com`,
 };
 
-// console.log('b2cPolicies', b2cPolicies);
-// console.log('b2cPolicies.authorities', b2cPolicies.authorities);
-// console.log('b2cPolicies.authorities.signUpSignIn', b2cPolicies.authorities.signUpSignIn); // WORKS, and lists authority
-// console.log('b2cPolicies.authorities.signUpSignIn.authority', b2cPolicies.authorities.signUpSignIn.authority); // FAILS as if the above is undefined
-
 /**
  * Configuration object to be passed to MSAL instance on creation. 
  * For a full list of MSAL.js configuration parameters, visit:
  * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md 
+ * + Simpler Example: https://learn.microsoft.com/en-us/answers/questions/904183/spa-application-aadsts50049-invalid-instance-error
  */
-/*
 export const msalConfig = {
     auth: {
-        // clientId: '09dd92cf-78ba-4c25-94b2-ec3f3ef84352', // This is the ONLY mandatory field that you need to supply.
+        // clientId: `<your-clientID>`,
         clientId: process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID,
-        // authority: b2cPolicies.authorities.signUpSignIn.authority, // Choose SUSI as your default authority.
+        // authority: `https://<your-tenant>.b2clogin.com/<your-tenant>.onmicrosoft.com/<your-policyID>`,
         authority: `https://${process.env.NEXT_PUBLIC_AZURE_AD_TENANT}.b2clogin.com/${process.env.NEXT_PUBLIC_AZURE_AD_TENANT}.onmicrosoft.com/${process.env.NEXT_PUBLIC_AZURE_AD_SIGNUP_FLOW}`,
-        knownAuthorities: [b2cPolicies.authorityDomain], // Mark your B2C tenant's domain as trusted.
-        redirectUri: '/', // You must register this URI on Azure Portal/App Registration. Defaults to window.location.origin
-        postLogoutRedirectUri: '/', // Indicates the page to navigate after logout.
-        navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
-        protocolMode: 'AAD',
+        // knownAuthorities: [`<your-tenant>.b2clogin.com`], // array of URIs that are known to be valid,
+        knownAuthorities: [`${process.env.NEXT_PUBLIC_AZURE_AD_TENANT}.b2clogin.com`], // array of URIs that are known to be valid,
+        validateAuthority: true,
+        navigateToLoginRequestUrl: true,
     },
     cache: {
-        cacheLocation: 'sessionStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
+        // cacheLocation: 'sessionStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
+        cacheLocation: 'localStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
         storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
     },
     system: {
@@ -99,28 +94,8 @@ export const msalConfig = {
         },
     },
 };
-*/
 
-// From https://learn.microsoft.com/en-us/answers/questions/904183/spa-application-aadsts50049-invalid-instance-error
-export const msalConfig = {
-    auth: {
-        // clientId: `<your-clientID>`,
-        clientId: process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_ID,
-        // authority: `https://<your-tenant>.b2clogin.com/<your-tenant>.onmicrosoft.com/<your-policyID>`,
-        authority: `https://${process.env.NEXT_PUBLIC_AZURE_AD_TENANT}.b2clogin.com/${process.env.NEXT_PUBLIC_AZURE_AD_TENANT}.onmicrosoft.com/${process.env.NEXT_PUBLIC_AZURE_AD_SIGNUP_FLOW}`,
-        // knownAuthorities: [`<your-tenant>.b2clogin.com`], // array of URIs that are known to be valid,
-        knownAuthorities: [`${process.env.NEXT_PUBLIC_AZURE_AD_TENANT}.b2clogin.com`], // array of URIs that are known to be valid,
-        validateAuthority: true,
-        navigateToLoginRequestUrl: true,
-        // clientSecret: process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_SECRET,
-    }
-}
-
-// NB: Aiming for:
-// # Authorization URL: https://tenantshubbcc.b2clogin.com/tenantshubbcc.onmicrosoft.com/B2C_1_signin-signup/oauth2/v2.0/authorize
-// # Token URL: https://tenantshubbcc.b2clogin.com/tenantshubbcc.onmicrosoft.com/B2C_1_signin-signup/oauth2/v2.0/token
-
-console.log('msalConfig', msalConfig);
+console.debug('msalConfig', msalConfig);
 
 /**
  * Add here the endpoints and scopes when obtaining an access token for protected web APIs. For more information, see:
@@ -147,11 +122,8 @@ export const protectedResources = {
 export const loginRequest = {
     // scopes: [...protectedResources.apiTodoList.scopes.read, ...protectedResources.apiTodoList.scopes.write],
     //scopes: [process.env.NEXT_PUBLIC_AZURE_AD_AUDIENCE, 'openid', 'profile', 'email'],
-    scopes: [process.env.NEXT_PUBLIC_AZURE_AD_AUDIENCE],
-    // redirectUri: 'http://localhost:3000',
+    scopes: [process.env.NEXT_PUBLIC_AZURE_AD_AUDIENCE, 'openid'],
     redirectUri: 'http://localhost:3000/',
-    // redirectUri: 'http://localhost:3000/api/auth/callback/azure-ad',
-    // redirectUri: 'https://localhost:7066/swagger/index.html',
 };
 
 export const msalInstance = new PublicClientApplication(msalConfig);
@@ -159,22 +131,15 @@ await msalInstance.initialize();
 
 console.log('msalInstance', msalInstance);
 
-//export const login = () => msalInstance.loginPopup(loginRequest);
 export const login = async () => {
     try {
-        await msalInstance.loginPopup(loginRequest);
+        return await msalInstance.loginPopup(loginRequest);
         // await msalInstance.loginRedirect(loginRequest);
-        /*
-        await msalInstance.loginPopup(loginRequest);
-        console.log('Logged in');
-        const accounts/*: AccountInfo[]* / = msalInstance.getAllAccounts();
-        console.log('accounts', accounts);
-        */
-        // await msalInstance.acquireTokenPopup(loginRequest);
     }
     catch(ex)
     {
         console.error('login error', ex);    
+        return undefined;
     }
 };
 export const logout = async () => await msalInstance.logoutPopup();

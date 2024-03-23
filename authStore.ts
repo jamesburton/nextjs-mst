@@ -13,12 +13,8 @@ let authStore: IAuthStore | undefined;
 
 export const AuthStore = types
     .model({
-        // user: types.maybeNull(types.string),
-        // token: types.maybeNull(types.string),
-        // isAuth: types.optional(types.boolean, false),
-        // example: '649',
         accessToken: types.maybeNull(types.string),
-        accounts: types.maybeNull(types.frozen()),
+        accounts: types.maybeNull(types.frozen(null)),
         authority: types.maybeNull(types.string),
         expiresOn: types.maybeNull(types.Date),
         idToken: types.maybeNull(types.string),
@@ -39,13 +35,6 @@ export const AuthStore = types
             self.uniqueId = result?.uniqueId;
         },
         signIn: async () => {
-            // console.log('signIn');
-            /*
-            self.user = "Fake User";
-            self.token = "Fake Token";
-            self.isAuth = true;
-            self.example = '381';
-            */
             try
             {
                 var result = await msalInstance.loginPopup(loginRequest);
@@ -54,12 +43,6 @@ export const AuthStore = types
                 console.log('accounts', accounts);
 
                 (self as any).setAuthDetails(result);
-                /*
-                self.user = "Fake User";
-                self.token = "Fake Token";
-                self.isAuth = true;
-                self.example = '381';
-                */
             }
             catch(ex)
             {
@@ -67,21 +50,10 @@ export const AuthStore = types
             }
         },
         signOut: async () => {
-            /*
-            console.log('signOut');
-            self.user = null;
-            self.token = null;
-            self.isAuth = false;
-            self.example = '649';
-            */
             try
             {
                 await msalInstance.logoutPopup();
                 console.log('Logged out');
-                // self.user = null;
-                // self.token = null;
-                // self.isAuth = false;
-                // self.example = '649';
                 (self as any).setAuthDetails(null);
             }
             catch(ex)
