@@ -42,8 +42,19 @@ export const AuthStore = types
         tokenType: types.maybeNull(types.string),
         uniqueId: types.maybeNull(types.string),
         idTokenClaims: types.maybeNull(IdTokenClaims),
+        autoLoad: true,
     })
     .actions((self) => ({
+        setAutoLoad(value: boolean) {
+            self.autoLoad = value;
+        },
+        tryAutoLoad() {
+            if (self.autoLoad) {
+                self.autoLoad = false;
+                console.log('Auto-loading session ...');
+                (self as any).loadSession();
+            }
+        },
         setAuthDetails: (result: any|null|undefined) => {
             console.log('setAuthDetails', result);
             self.accessToken = result?.accessToken;
@@ -82,11 +93,39 @@ export const AuthStore = types
             {
                 console.error(ex);
             }
+        },
+        loadSession: async () => {
+            try
+            {
+                console.log('AuthStore.loadSession ... getting accounts');
+                var accounts = msalInstance.getAllAccounts();
+                console.log('accounts', accounts);
+                if (accounts.length > 0) {
+                    var result = await msalInstance.acquireTokenSilent({
+                        account: accounts[0],
+                        scopes: loginRequest.scopes,
+                    });
+                    console.log('Loaded session, result=', result);
+                    (self as any).setAuthDetails(result);
+                }
+            }
+            catch(ex)
+            {
+                console.error('AuthStore.loadSession error: ', ex);
+            }
+        },
+        // MST Lifecycle Hooks
+        // See https://mobx-state-tree.js.org/overview/hooks
+        afterCreate() {
+            console.log('AuthStore.afterCreate');
+            (self as any).loadSession();
         }
     }))
+    /*
     .views((self) => ({
         rootStore: () => getRoot(self)
     }))
+    */
     .volatile(self => ({
         msalInstance,
     }));

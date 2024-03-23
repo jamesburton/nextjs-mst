@@ -12,8 +12,10 @@ import { IdTokenData } from "../components/DataDisplay";
 export default function App({ Component, pageProps }) {
   const store = useStore(pageProps.initialState);
 
-    const { instance } = useMsal();    
-    const activeAccount = instance.getActiveAccount();
+  const { instance } = useMsal();    
+  const activeAccount = instance.getActiveAccount();
+
+  useEffect(() => store.auth.tryAutoLoad());
 
   return (
     <Provider store={store}>
