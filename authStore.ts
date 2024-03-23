@@ -8,7 +8,7 @@ import {
     types,
 } from "mobx-state-tree";
 
-// let authStore: IAuthStore | undefined;
+let authStore: IAuthStore | undefined;
 
 export const AuthStore = types
     .model({
@@ -18,10 +18,23 @@ export const AuthStore = types
         example: '649',
     })
     .actions((self) => ({
-
+        signIn: async () => {
+            console.log('signIn');
+            self.user = "Fake User";
+            self.token = "Fake Token";
+            self.isAuth = true;
+            self.example = '381';
+        },
+        signOut: async () => {
+            console.log('signOut');
+            self.user = null;
+            self.token = null;
+            self.isAuth = false;
+            self.example = '649';
+        }
     }))
     .views((self) => ({
-        rootStore: () => getRoot(self),
+        rootStore: () => getRoot(self)
     }));
 
 export type IAuthStore = Instance<typeof AuthStore>;
