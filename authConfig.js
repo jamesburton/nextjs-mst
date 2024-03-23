@@ -95,7 +95,7 @@ export const msalConfig = {
     },
 };
 
-console.debug('msalConfig', msalConfig);
+// console.debug('msalConfig', msalConfig);
 
 /**
  * Add here the endpoints and scopes when obtaining an access token for protected web APIs. For more information, see:
@@ -123,7 +123,7 @@ export const loginRequest = {
     // scopes: [...protectedResources.apiTodoList.scopes.read, ...protectedResources.apiTodoList.scopes.write],
     //scopes: [process.env.NEXT_PUBLIC_AZURE_AD_AUDIENCE, 'openid', 'profile', 'email'],
     scopes: [process.env.NEXT_PUBLIC_AZURE_AD_AUDIENCE, 'openid', 'email', 'offline_access'],
-    redirectUri: 'http://localhost:3000/',
+    redirectUri: process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000/',
 };
 
 export const msalInstance = new PublicClientApplication(msalConfig);
