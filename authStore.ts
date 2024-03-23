@@ -11,6 +11,26 @@ import { msalInstance, loginRequest } from './authConfig';
 
 let authStore: IAuthStore | undefined;
 
+export const IdTokenClaims = types
+    .model({
+        at_hash: types.maybeNull(types.string), 
+        aud: types.maybeNull(types.string),// NB: GUID
+        auth_time: types.maybeNull(types.Date),
+        emails: types.maybeNull(types.array(types.string)),
+        exp: types.maybeNull(types.Date),
+        family_name: types.maybeNull(types.string),
+        given_name: types.maybeNull(types.string),
+        iat: types.maybeNull(types.Date),
+        iss: types.maybeNull(types.string),
+        name: types.maybeNull(types.string),
+        nbf: types.maybeNull(types.Date),
+        nonce: types.maybeNull(types.string), // GUID
+        oid: types.maybeNull(types.string), // GUID
+        sub: types.maybeNull(types.string), // GUID
+        tfp: types.maybeNull(types.string), // e.g. "B2C_1_signin-signup"
+        ver: types.maybeNull(types.string), // e.g. "1.0"
+    });
+
 export const AuthStore = types
     .model({
         accessToken: types.maybeNull(types.string),
@@ -21,6 +41,7 @@ export const AuthStore = types
         scopes: types.maybeNull(types.array(types.string)),
         tokenType: types.maybeNull(types.string),
         uniqueId: types.maybeNull(types.string),
+        idTokenClaims: types.maybeNull(IdTokenClaims),
     })
     .actions((self) => ({
         setAuthDetails: (result: any|null|undefined) => {
@@ -33,6 +54,7 @@ export const AuthStore = types
             self.scopes = result?.scopes;
             self.tokenType = result?.tokenType;
             self.uniqueId = result?.uniqueId;
+            self.idTokenClaims = result?.idTokenClaims;
         },
         signIn: async () => {
             try

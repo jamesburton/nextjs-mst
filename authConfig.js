@@ -122,7 +122,7 @@ export const protectedResources = {
 export const loginRequest = {
     // scopes: [...protectedResources.apiTodoList.scopes.read, ...protectedResources.apiTodoList.scopes.write],
     //scopes: [process.env.NEXT_PUBLIC_AZURE_AD_AUDIENCE, 'openid', 'profile', 'email'],
-    scopes: [process.env.NEXT_PUBLIC_AZURE_AD_AUDIENCE, 'openid'],
+    scopes: [process.env.NEXT_PUBLIC_AZURE_AD_AUDIENCE, 'openid', 'email', 'offline_access'],
     redirectUri: 'http://localhost:3000/',
 };
 
