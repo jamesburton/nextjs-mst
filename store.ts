@@ -15,6 +15,7 @@ const Store = types
     lastUpdate: types.Date,
     light: false,
     auth: types.optional(AuthStore, {}),
+    example: '649',
   })
   .actions((self) => {
     let timer: any;
