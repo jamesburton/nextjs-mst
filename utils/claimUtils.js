@@ -235,4 +235,4 @@ export function compareIssuingPolicy(idTokenClaims, policyToCompare) {
     return tfpMatches || acrMatches;
 }
 
-export default function ClaimUtils() { return <div><em>Do not use the default import of pages/utils/claimUtils.js</em></div>; }
+// export default function ClaimUtils() { return <div><em>Do not use the default import of pages/utils/claimUtils.js</em></div>; }

@@ -1,21 +1,40 @@
 import { Provider } from "mobx-react";
 import { useStore } from "../store";
 import { useEffect } from 'react';
-import { MsalProvider, useMsal } from '@azure/msal-react';
+// import { MsalProvider, useMsal } from '@azure/msal-react';
 import { EventType } from '@azure/msal-browser';
 import { b2cPolicies, protectedResources } from '../authConfig';
-import { compareIssuingPolicy } from './utils/claimUtils';
+import { compareIssuingPolicy } from '../utils/claimUtils';
+
+import { AuthenticatedTemplate, useMsal } from "@azure/msal-react";
+import { IdTokenData } from "../components/DataDisplay";
 
 export default function App({ Component, pageProps }) {
   const store = useStore(pageProps.initialState);
+
+    const { instance } = useMsal();    
+    const activeAccount = instance.getActiveAccount();
 
   return (
     <Provider store={store}>
       <MsalSync />
       <Component {...pageProps} />
+      {/* from https://github.com/Azure-Samples/ms-identity-javascript-react-tutorial/blob/main/3-Authorization-II/2-call-api-b2c/SPA/src/pages/Home.jsx */}
+      <AuthenticatedTemplate>
+          {
+              activeAccount ?
+              <Container>
+                      <IdTokenData idTokenClaims={activeAccount.idTokenClaims} />
+              </Container>
+              :
+              null
+          }
+      </AuthenticatedTemplate>
     </Provider>
   );
 }
+
+const Container = ({children}) => <div>{children}</div>;
 
 // Based on https://github.com/Azure-Samples/ms-identity-javascript-react-tutorial/blob/main/3-Authorization-II/2-call-api-b2c/SPA/src/App.jsx
 const MsalSync = () => {
